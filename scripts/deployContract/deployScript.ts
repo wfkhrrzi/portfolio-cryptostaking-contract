@@ -2,6 +2,7 @@ import { viem } from "hardhat";
 import DeployContract from "./DeployContract";
 import { Abi, Address, zeroAddress } from "viem";
 import { Config } from "../config/config";
+import assert from "assert";
 
 const { PUBLIC_KEY, BACKEND_WALLET } = process.env;
 
@@ -32,6 +33,13 @@ export async function deployContracts(deployToChain = false) {
 		func_deploy = ContractDeployment.deployToChain.bind(ContractDeployment);
 	} else {
 		func_deploy = DeployContract.deployLocal.bind(DeployContract);
+	}
+
+	if (deployToChain) {
+		assert(
+			BACKEND_WALLET != undefined,
+			"BACKEND_WALLET is undefined. Set in .env"
+		);
 	}
 
 	const backendSignerAddress: Address = deployToChain

@@ -129,6 +129,11 @@
       "address": "0xd7C43697A661ed024c1109013457506169428db9",
       "txHash": "0x1ad0f7226661fed3ecd176deb7215caeabee1cb3aeaed69e8a498a99d9556850",
       "kind": "transparent"
+    },
+    {
+      "address": "0xD3135ba920108D17cF3f58358f60E8b22C13633c",
+      "txHash": "0xba0c5cbb15363adf02e67d1f280e7cceb6ba16d5e0a292d8986c44a6afe543c3",
+      "kind": "transparent"
     }
   ],
   "impls": {
@@ -6104,6 +6109,132 @@
               "slot": "0"
             }
           ],
+          "erc7201:openzeppelin.storage.ReentrancyGuard": [
+            {
+              "contract": "ReentrancyGuardUpgradeable",
+              "label": "_status",
+              "type": "t_uint256",
+              "src": "@openzeppelin\\contracts-upgradeable\\utils\\ReentrancyGuardUpgradeable.sol:40",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    },
+    "be079eef838c548198cc2715e07ed8bc3daac98439b30238e8fed1e2f94c3e5a": {
+      "address": "0x60Bf36ed4a1fF45749B4b52Cbe889f8eA48b949d",
+      "txHash": "0x85c329f1c39f5b2673fc75e03c3295d1813a405a4fd2b6938b90fdccd2f413a2",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "label": "usdt",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_contract(IERC20)608",
+            "contract": "CryptoStaking",
+            "src": "contracts\\CryptoStaking.sol:15"
+          },
+          {
+            "label": "backendSigner",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_address",
+            "contract": "CryptoStaking",
+            "src": "contracts\\CryptoStaking.sol:20"
+          },
+          {
+            "label": "invalidSignature",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_mapping(t_bytes_memory_ptr,t_bool)",
+            "contract": "CryptoStaking",
+            "src": "contracts\\CryptoStaking.sol:25"
+          }
+        ],
+        "types": {
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_struct(InitializableStorage)10_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(ReentrancyGuardStorage)64_storage": {
+            "label": "struct ReentrancyGuardUpgradeable.ReentrancyGuardStorage",
+            "members": [
+              {
+                "label": "_status",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_bytes_memory_ptr": {
+            "label": "bytes",
+            "numberOfBytes": "32"
+          },
+          "t_contract(IERC20)608": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_bytes_memory_ptr,t_bool)": {
+            "label": "mapping(bytes => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_bytes_storage": {
+            "label": "bytes"
+          }
+        },
+        "namespaces": {
           "erc7201:openzeppelin.storage.ReentrancyGuard": [
             {
               "contract": "ReentrancyGuardUpgradeable",

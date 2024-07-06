@@ -1,0 +1,8 @@
+{
+    "contracts": {
+        "CryptoStaking": "0xD3135ba920108D17cF3f58358f60E8b22C13633c"
+    },
+    "v1": {
+        "CryptoStaking": "0x60Bf36ed4a1fF45749B4b52Cbe889f8eA48b949d"
+    }
+}
