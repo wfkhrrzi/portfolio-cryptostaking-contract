@@ -12,12 +12,12 @@ contract CryptoStaking is Initializable, ReentrancyGuardUpgradeable {
 	/**
 	 * @dev usdt contract
 	 */
-	IERC20 usdt;
+	IERC20 public usdt;
 
 	/**
 	 * @dev backend signer
 	 */
-	address backendSigner;
+	address public backendSigner;
 
 	/**
 	 * @dev store revoked signatures
@@ -82,6 +82,9 @@ contract CryptoStaking is Initializable, ReentrancyGuardUpgradeable {
 		// verify signature
 		_validateSignature(_getHashedMessage(payload), signature);
 
+        // revoke signature
+        invalidSignature[signature] = true;
+
 		// unstake
 		usdt.transfer(msg.sender, payload.amount);
 
@@ -120,6 +123,8 @@ contract CryptoStaking is Initializable, ReentrancyGuardUpgradeable {
 		string memory message = string(
 			abi.encodePacked(
 				Strings.toHexString(tx.origin),
+				"_",
+				Strings.toString(uint256(payload.ops)),
 				"_",
 				Strings.toString(payload.amount),
 				"_",

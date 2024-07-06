@@ -1,6 +1,6 @@
 import { viem } from "hardhat";
 import DeployContract from "./DeployContract";
-import { Abi } from "viem";
+import { Abi, Address, zeroAddress } from "viem";
 import { Config } from "../config/config";
 
 const { PUBLIC_KEY, BACKEND_WALLET } = process.env;
@@ -19,28 +19,54 @@ const { PUBLIC_KEY, BACKEND_WALLET } = process.env;
  *	);
 	ABIs.push(REdactedNFTContract.abi)
  */
-export async function deployContracts(deployToChain=false) {
-	const ABIs: Abi[] = []
-	
-	const config = new Config()
-	const ContractDeployment = new DeployContract(config)
+export async function deployContracts(deployToChain = false) {
+	const ABIs: Abi[] = [];
 
-	let func_deploy: typeof DeployContract.deployLocal | typeof ContractDeployment.deployToChain;
+	const config = new Config();
+	const ContractDeployment = new DeployContract(config);
+
+	let func_deploy:
+		| typeof DeployContract.deployLocal
+		| typeof ContractDeployment.deployToChain;
 	if (deployToChain) {
-		func_deploy = ContractDeployment.deployToChain.bind(ContractDeployment)
+		func_deploy = ContractDeployment.deployToChain.bind(ContractDeployment);
 	} else {
-		func_deploy = DeployContract.deployLocal.bind(DeployContract)
+		func_deploy = DeployContract.deployLocal.bind(DeployContract);
 	}
 
-	// deploy REdacted contracts
-	const Lock = await viem.getContractAt(
-		"Lock",
+	const backendSignerAddress: Address = deployToChain
+		? (BACKEND_WALLET as Address)
+		: (await viem.getWalletClients())[1].account.address;
+
+	// deploy USDT contracts
+	const USDTContract = deployToChain
+		? await viem.getContractAt(
+				"USDT",
+				"0x281164a08efe10445772B26D2154fd6F4b90Fc08"
+		  )
+		: await viem.getContractAt(
+				"USDT",
+				(await (
+					await func_deploy("USDT")
+				).getAddress()) as `0x${string}`
+		  );
+	ABIs.push(USDTContract.abi);
+
+	// deploy CryptoStaking contracts
+	const CryptoStakingContract = await viem.getContractAt(
+		"CryptoStaking",
 		(await (
-			await func_deploy('Lock')
+			await func_deploy("CryptoStaking", [
+				USDTContract.address,
+				backendSignerAddress,
+			])
 		).getAddress()) as `0x${string}`
 	);
-	ABIs.push(Lock.abi)
-	
+	ABIs.push(CryptoStakingContract.abi);
 
-	return { Lock, ABIs : ABIs.reduce((prev, cur)=>[...prev, ...cur])};
+	return {
+		CryptoStakingContract,
+		USDTContract,
+		ABIs: ABIs.reduce((prev, cur) => [...prev, ...cur]),
+	};
 }
