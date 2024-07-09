@@ -76,8 +76,10 @@
     }
     ```
 
-2.  Deploy the contract
+2.  Deploy the contract.
 
     ```sh
     $ npm run deploy
     ```
+
+3.  The deployment info (e.g. contract addresses) are stored within [the config directory](scripts/config).
