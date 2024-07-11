@@ -41,9 +41,9 @@ contract CryptoStaking is Initializable, ReentrancyGuardUpgradeable {
 		uint256 timestamp;
 	}
 
-	event StakeUSDT(uint256 amount);
-	event UnstakeUSDT(uint256 amount);
-	event ClaimUSDTReward(uint256 amount);
+	event StakeUSDT(address indexed from, uint256 amount);
+	event UnstakeUSDT(address indexed from, uint256 amount);
+	event ClaimUSDTReward(address indexed from, uint256 amount);
 
 	error SignatureAlreadyClaimed(bytes signature);
 	error InvalidSignature(bytes32 hashedMessage, bytes signature);
@@ -72,7 +72,7 @@ contract CryptoStaking is Initializable, ReentrancyGuardUpgradeable {
 		usdt.transferFrom(msg.sender, address(this), amount);
 
 		// emit event
-		emit StakeUSDT(amount);
+		emit StakeUSDT(msg.sender, amount);
 	}
 
 	function unstakeOrClaimUSDT(
@@ -82,17 +82,17 @@ contract CryptoStaking is Initializable, ReentrancyGuardUpgradeable {
 		// verify signature
 		_validateSignature(_getHashedMessage(payload), signature);
 
-        // revoke signature
-        invalidSignature[signature] = true;
+		// revoke signature
+		invalidSignature[signature] = true;
 
 		// unstake
 		usdt.transfer(msg.sender, payload.amount);
 
 		// emit event
 		if (payload.ops == WithdrawUSDTOps.UNSTAKE) {
-			emit UnstakeUSDT(payload.amount);
+			emit UnstakeUSDT(msg.sender, payload.amount);
 		} else {
-			emit ClaimUSDTReward(payload.amount);
+			emit ClaimUSDTReward(msg.sender, payload.amount);
 		}
 	}
 

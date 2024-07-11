@@ -4,5 +4,8 @@
     },
     "v1": {
         "CryptoStaking": "0x60Bf36ed4a1fF45749B4b52Cbe889f8eA48b949d"
+    },
+    "v2": {
+        "CryptoStaking": "0x9958dB842e2578DC20EA29d952d461fac1B3df41"
     }
 }

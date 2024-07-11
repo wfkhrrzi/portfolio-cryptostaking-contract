@@ -10,10 +10,7 @@ async function main() {
 	/**
 	 * Upgrade REdacted Staking
 	 */
-	// await DeployContractObject.deployToChain("REdactedStaking", undefined, 3)
-
-	DeployContract.
-
+	await DeployContractObject.deployToChain("CryptoStaking", undefined, 2);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
