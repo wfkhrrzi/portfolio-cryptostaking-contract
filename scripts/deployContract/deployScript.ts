@@ -72,6 +72,14 @@ export async function deployContracts(deployToChain = false) {
 	);
 	ABIs.push(CryptoStakingContract.abi);
 
+	// deploy Multicall in Local node
+	if (!deployToChain) {
+		await func_deploy("Multicall3", [
+			USDTContract.address,
+			backendSignerAddress,
+		]);
+	}
+
 	return {
 		CryptoStakingContract,
 		USDTContract,

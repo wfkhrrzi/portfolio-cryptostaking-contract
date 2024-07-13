@@ -1,7 +1,7 @@
 import { deployContracts } from "./deployContract/deployScript";
 
 async function main() {
-	await deployContracts(true);
+	await deployContracts(false);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

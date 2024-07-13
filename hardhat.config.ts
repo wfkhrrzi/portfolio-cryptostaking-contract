@@ -1,25 +1,37 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox-viem";
 import "@openzeppelin/hardhat-upgrades";
-import '@openzeppelin/upgrades-core'
+import "@openzeppelin/upgrades-core";
 import * as dotenv from "dotenv";
 
 dotenv.config();
-const { PRIVATE_KEY, BSCSCAN_API_KEY, ETHERSCAN_API_KEY, BLAST_SEPOLIA_API_KEY } = process.env;
+const {
+	PRIVATE_KEY,
+	BSCSCAN_API_KEY,
+	ETHERSCAN_API_KEY,
+	BLAST_SEPOLIA_API_KEY,
+} = process.env;
 
 const config: HardhatUserConfig = {
 	solidity: {
-		version: "0.8.20",
-		settings: {
-			outputSelection: {
-				"*": {
-					"*": ["storageLayout"],
+		compilers: [
+			{
+				version: "0.8.20",
+				settings: {
+					outputSelection: {
+						"*": {
+							"*": ["storageLayout"],
+						},
+					},
+					optimizer: {
+						enabled: true,
+					},
 				},
 			},
-			optimizer: {
-				enabled: true,
+			{
+				version: "0.8.12",
 			},
-		},
+		],
 	},
 
 	defaultNetwork: "hardhat",
@@ -42,6 +54,9 @@ const config: HardhatUserConfig = {
 				enabled: false,
 			},
 			allowUnlimitedContractSize: true,
+		},
+		local: {
+			url: "http://127.0.0.1:8545/",
 		},
 	},
 
@@ -73,8 +88,8 @@ const config: HardhatUserConfig = {
 	},
 
 	mocha: {
-		timeout: 100000000
-	  },
+		timeout: 100000000,
+	},
 };
 
 export default config;

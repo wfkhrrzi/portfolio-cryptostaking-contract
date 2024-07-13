@@ -23,6 +23,9 @@
 		"compile": "npx hardhat compile",
 		"node": "npx hardhat node",
 		"upgrade": "source .env && npx hardhat run scripts/upgrade.ts --network $DEPLOY_NETWORK",
-		"verify": "source .env && npx hardhat verify --network $DEPLOY_NETWORK"
+		"verify": "source .env && npx hardhat verify --network $DEPLOY_NETWORK",
+		"localTesting:init": "source .env && npx hardhat run scripts/deploy.ts --network $DEPLOY_NETWORK && npx hardhat run scripts/localTesting/setup.ts --network $DEPLOY_NETWORK",
+		"localTesting:stakeBulk": "source .env && npx hardhat run scripts/localTesting/stakeBulk.ts --network $DEPLOY_NETWORK",
+		"localTesting:getLogs": "source .env && npx hardhat run scripts/localTesting/getLogs.ts --network $DEPLOY_NETWORK"
 	}
 }
