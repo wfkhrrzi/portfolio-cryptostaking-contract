@@ -43,10 +43,21 @@ async function main() {
 			stake_amount
 		);
 
+		// push stake
 		stakes.push({
-			stake_amount: stake_amount.toString(),
+			current_principal: stake_amount.toString(),
+			initial_principal: stake_amount.toString(),
 			wallet_address: accounts[i].account.address,
 			txHash,
+			time_stake: Number(
+				(
+					await client.getBlock({
+						blockHash: (
+							await client.getTransactionReceipt({ hash: txHash })
+						).blockHash,
+					})
+				).timestamp
+			),
 		});
 	}
 

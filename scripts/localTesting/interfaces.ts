@@ -2,8 +2,10 @@ import { Address, Hex } from "viem";
 
 export type StakeInfo = {
 	wallet_address: Address;
-	stake_amount: string;
+	initial_principal: string;
+	current_principal: string;
 	txHash: Hex;
+	time_stake: number;
 };
 
 export const STAKE_FILENAME = `${__dirname}/stakeBulk.json`;

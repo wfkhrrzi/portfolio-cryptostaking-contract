@@ -1,4 +1,4 @@
 import { WithdrawUSDTOps } from "../../test/CryptoStakingOps";
 import { withdrawalOps } from "./withdrawalOps";
 
-withdrawalOps(WithdrawUSDTOps.UNSTAKE).catch((err) => console.error(err));
+withdrawalOps(WithdrawUSDTOps.CLAIM_REWARD).catch((err) => console.error(err));
