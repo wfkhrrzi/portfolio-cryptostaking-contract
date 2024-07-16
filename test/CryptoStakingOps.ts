@@ -26,12 +26,12 @@ export type ContractCollection = {
 };
 
 export class CryptoStakingOps {
-	static async stakeUSDT(
+	static async stakeUSDT<T extends boolean = true>(
 		contracts: ContractCollection,
 		staker: WalletClient,
 		amount: bigint,
-		expectFailure = false
-	) {
+		expectFailure?: T
+	): Promise<T extends true ? { txHash: Hex } : undefined> {
 		// record balances
 		const balanceBeforeStaker = await contracts.USDT.read.balanceOf([
 			staker.account.address,
@@ -47,7 +47,7 @@ export class CryptoStakingOps {
 
 		if (expectFailure) {
 			await expect(tx).rejected;
-			return;
+			return undefined as T extends true ? { txHash: Hex } : undefined;
 		}
 		await expect(tx).fulfilled;
 
@@ -60,14 +60,18 @@ export class CryptoStakingOps {
 				contracts.CryptoStaking.address,
 			])
 		).equal(balanceBeforeContract + amount);
+
+		return {
+			txHash: await tx,
+		} as T extends true ? { txHash: Hex } : undefined;
 	}
 
-	static async unstakeOrClaimUSDT(
+	static async unstakeOrClaimUSDT<T extends boolean = true>(
 		contracts: ContractCollection,
 		staker: WalletClient,
 		signaturePayload: WithdrawUSDTOpsSignature,
-		expectFailure = false
-	) {
+		expectFailure?: T
+	): Promise<T extends true ? { txHash: Hex } : undefined> {
 		// record balances
 		const beforeWithdrawOpsStaker = await contracts.USDT.read.balanceOf([
 			staker.account.address,
@@ -83,10 +87,11 @@ export class CryptoStakingOps {
 				account: staker.account.address,
 			}
 		);
+		// 0x70997970c51812dc3a010c7d01b50e0d17dc79c8_0_2970000_1721118399
 
 		if (expectFailure) {
 			await expect(tx).rejected;
-			return;
+			return undefined as T extends true ? { txHash: Hex } : undefined;
 		}
 		await expect(tx).fulfilled;
 
@@ -99,6 +104,10 @@ export class CryptoStakingOps {
 				contracts.CryptoStaking.address,
 			])
 		).equal(beforeWithdrawOpsContract - signaturePayload.payload.amount);
+
+		return { txHash: await tx } as T extends true
+			? { txHash: Hex }
+			: undefined;
 	}
 
 	static async generateWithdrawUSDTOpsSignature(

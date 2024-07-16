@@ -23,6 +23,12 @@ async function main() {
 
 	// start interval mining
 	await network.provider.send("evm_setIntervalMining", [3000]);
+
+	// ensure correct backend signer
+	console.log(
+		"backend signer:",
+		await contractCollection.CryptoStaking.read.backendSigner()
+	);
 }
 
 main().catch((error) => console.log(error));

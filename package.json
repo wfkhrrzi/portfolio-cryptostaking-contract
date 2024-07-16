@@ -21,11 +21,13 @@
 		"clean-compile": "npx hardhat clean && npx hardhat compile",
 		"test": "npx hardhat test",
 		"compile": "npx hardhat compile",
-		"node": "npx hardhat node",
+		"node": "npx tsx scripts/localTesting/init-node.ts && npx hardhat node",
 		"upgrade": "source .env && npx hardhat run scripts/upgrade.ts --network $DEPLOY_NETWORK",
 		"verify": "source .env && npx hardhat verify --network $DEPLOY_NETWORK",
 		"localTesting:init": "source .env && npx hardhat run scripts/deploy.ts --network $DEPLOY_NETWORK && npx hardhat run scripts/localTesting/setup.ts --network $DEPLOY_NETWORK",
+		"localTesting:initStakeBulk": "source .env && npx tsx scripts/localTesting/init-node.ts && npx hardhat run scripts/localTesting/stakeBulk.ts --network $DEPLOY_NETWORK",
 		"localTesting:stakeBulk": "source .env && npx hardhat run scripts/localTesting/stakeBulk.ts --network $DEPLOY_NETWORK",
+		"localTesting:withdrawBulk": "source .env && npx hardhat run scripts/localTesting/withdrawBulk.ts --network $DEPLOY_NETWORK",
 		"localTesting:getLogs": "source .env && npx hardhat run scripts/localTesting/getLogs.ts --network $DEPLOY_NETWORK"
 	}
 }

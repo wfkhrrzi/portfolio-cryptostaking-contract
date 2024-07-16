@@ -1,4 +1,4 @@
-import { viem } from "hardhat";
+import { network, viem } from "hardhat";
 import DeployContract from "./DeployContract";
 import { Abi, Address, zeroAddress } from "viem";
 import { Config } from "../config/config";
@@ -35,16 +35,15 @@ export async function deployContracts(deployToChain = false) {
 		func_deploy = DeployContract.deployLocal.bind(DeployContract);
 	}
 
-	if (deployToChain) {
-		assert(
-			BACKEND_WALLET != undefined,
-			"BACKEND_WALLET is undefined. Set in .env"
-		);
-	}
+	assert(
+		BACKEND_WALLET != undefined,
+		"BACKEND_WALLET is undefined. Set in .env"
+	);
 
-	const backendSignerAddress: Address = deployToChain
-		? (BACKEND_WALLET as Address)
-		: (await viem.getWalletClients())[1].account.address;
+	const backendSignerAddress: Address =
+		deployToChain || (!deployToChain && network.name == "local")
+			? (BACKEND_WALLET as Address)
+			: (await viem.getWalletClients())[1].account.address;
 
 	// deploy USDT contracts
 	const USDTContract = deployToChain

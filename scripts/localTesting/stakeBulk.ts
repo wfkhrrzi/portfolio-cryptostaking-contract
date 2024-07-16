@@ -4,9 +4,7 @@ import { Address, parseEther } from "viem";
 import { CryptoStakingOps } from "../../test/CryptoStakingOps";
 import assert from "assert";
 import fs from "fs";
-import { StakeInfo } from "./interfaces";
-
-const FILENAME = `${__dirname}/stakeBulk.json`;
+import { STAKE_FILENAME, StakeInfo } from "./interfaces";
 
 async function main() {
 	const client = await viem.getPublicClient();
@@ -23,14 +21,14 @@ async function main() {
 
 	const num_stakers: number = Number(
 		process.env["num_stakers"] ||
-			Math.floor(Math.random() * accounts.length)
+			Math.floor(Math.random() * accounts.length + 1)
 	);
 
 	// load stakes from json
 	let stakes: StakeInfo[] = [];
 
-	if (fs.existsSync(FILENAME))
-		stakes = JSON.parse(fs.readFileSync(FILENAME, "utf-8"));
+	if (fs.existsSync(STAKE_FILENAME))
+		stakes = JSON.parse(fs.readFileSync(STAKE_FILENAME, "utf-8"));
 
 	// perform stake operation
 	for (let i = 0; i < num_stakers; i++) {
@@ -39,7 +37,7 @@ async function main() {
 			"gwei"
 		);
 
-		await CryptoStakingOps.stakeUSDT(
+		const { txHash } = await CryptoStakingOps.stakeUSDT(
 			contractCollection,
 			accounts[i],
 			stake_amount
@@ -48,11 +46,12 @@ async function main() {
 		stakes.push({
 			stake_amount: stake_amount.toString(),
 			wallet_address: accounts[i].account.address,
+			txHash,
 		});
 	}
 
 	// save stakers
-	fs.writeFileSync(FILENAME, JSON.stringify(stakes, undefined, 4));
+	fs.writeFileSync(STAKE_FILENAME, JSON.stringify(stakes, undefined, 4));
 
 	console.log(`${num_stakers} stakers staked in CryptoStaking contract!`);
 	console.log(`beforeBlockNumber: ${beforeBlockNumber}`);
