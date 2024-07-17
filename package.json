@@ -28,6 +28,7 @@
 		"localTesting:initStakeBulk": "source .env && npx tsx scripts/localTesting/init-node.ts && npx hardhat run scripts/localTesting/stakeBulk.ts --network $DEPLOY_NETWORK",
 		"localTesting:stakeBulk": "source .env && npx hardhat run scripts/localTesting/stakeBulk.ts --network $DEPLOY_NETWORK",
 		"localTesting:withdrawBulk": "source .env && npx hardhat run scripts/localTesting/withdrawBulk.ts --network $DEPLOY_NETWORK",
+		"localTesting:decodeError": "source .env && npx hardhat run scripts/localTesting/decodeError.ts --network $DEPLOY_NETWORK",
 		"localTesting:getLogs": "source .env && npx hardhat run scripts/localTesting/getLogs.ts --network $DEPLOY_NETWORK"
 	}
 }

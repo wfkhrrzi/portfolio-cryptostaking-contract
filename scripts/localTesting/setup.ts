@@ -21,6 +21,20 @@ async function main() {
 		);
 	});
 
+	// mint usdt to contract
+	await contractCollection.USDT.write.mint([
+		contractCollection.CryptoStaking.address,
+		parseEther("100", "gwei"),
+	]);
+
+	// check contract USDT balance
+	console.log(
+		"contract's usdt balance:",
+		await contractCollection.USDT.read.balanceOf([
+			contractCollection.CryptoStaking.address,
+		])
+	);
+
 	// start interval mining
 	await network.provider.send("evm_setIntervalMining", [3000]);
 

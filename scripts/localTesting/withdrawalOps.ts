@@ -4,6 +4,7 @@ import { Hex } from "viem";
 import { CryptoStakingOps, WithdrawUSDTOps } from "../../test/CryptoStakingOps";
 import { STAKE_FILENAME, StakeInfo } from "./interfaces";
 import fs from "fs";
+import { expect } from "chai";
 
 export async function withdrawalOps(withdrawalOpsType: WithdrawUSDTOps) {
 	const contractCollection = await getContracts();
@@ -38,7 +39,7 @@ export async function withdrawalOps(withdrawalOpsType: WithdrawUSDTOps) {
 			withdrawalAmount = 0n.toString();
 		} else {
 			withdrawalAmount = String(
-				(Math.random() < 0.5 ? 0 : 1)
+				(Math.random() < 0.2 ? 0 : 1)
 					? current_principal
 					: Math.floor(Math.random() * Number(current_principal))
 			);
@@ -71,6 +72,13 @@ export async function withdrawalOps(withdrawalOpsType: WithdrawUSDTOps) {
 			};
 		};
 
+		const balanceUSDTBeforeContract =
+			await contractCollection.USDT.read.balanceOf([
+				contractCollection.CryptoStaking.address,
+			]);
+		const balanceUSDTBeforeStaker =
+			await contractCollection.USDT.read.balanceOf([wallet_address]);
+
 		try {
 			// perform withdrawal ops
 			const { txHash } = await CryptoStakingOps.unstakeOrClaimUSDT(
@@ -89,6 +97,17 @@ export async function withdrawalOps(withdrawalOpsType: WithdrawUSDTOps) {
 					},
 				}
 			);
+
+			// validate balance after fro contract & staker
+			expect(
+				await contractCollection.USDT.read.balanceOf([
+					contractCollection.CryptoStaking.address,
+				])
+			).equal(balanceUSDTBeforeContract - BigInt(withdrawalAmount));
+
+			expect(
+				await contractCollection.USDT.read.balanceOf([wallet_address])
+			).equal(balanceUSDTBeforeStaker + BigInt(withdrawalAmount));
 
 			console.log(
 				`Staker ${wallet_address} has successfully ${
