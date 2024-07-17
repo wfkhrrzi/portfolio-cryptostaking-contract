@@ -30,7 +30,22 @@ export async function withdrawalOps(withdrawalOpsType: WithdrawUSDTOps) {
 	const ops: string = WithdrawUSDTOps[withdrawalOpsType].toLowerCase();
 
 	for (let i = 0; i < num_stakers; i++) {
-		const { current_principal, wallet_address, txHash } = stakes[i];
+		const {
+			current_principal,
+			wallet_address,
+			txHash: stake_tx_hash,
+			claimable_reward,
+		} = stakes[i];
+
+		// skip if amount is zero
+		if (
+			(withdrawalOpsType == WithdrawUSDTOps.UNSTAKE &&
+				BigInt(current_principal) == 0n) ||
+			(withdrawalOpsType == WithdrawUSDTOps.CLAIM_REWARD &&
+				BigInt(claimable_reward) == 0n)
+		) {
+			return;
+		}
 
 		let withdrawalAmount: string;
 
@@ -39,7 +54,7 @@ export async function withdrawalOps(withdrawalOpsType: WithdrawUSDTOps) {
 			withdrawalAmount = 0n.toString();
 		} else {
 			withdrawalAmount = String(
-				(Math.random() < 0.2 ? 0 : 1)
+				Math.random() < 0.2
 					? current_principal
 					: Math.floor(Math.random() * Number(current_principal))
 			);
@@ -51,7 +66,7 @@ export async function withdrawalOps(withdrawalOpsType: WithdrawUSDTOps) {
 				{
 					method: "post",
 					body: new URLSearchParams({
-						stake_tx_hash: txHash,
+						stake_tx_hash,
 						amount: withdrawalAmount,
 						type: ops,
 					} as {
@@ -79,52 +94,52 @@ export async function withdrawalOps(withdrawalOpsType: WithdrawUSDTOps) {
 		const balanceUSDTBeforeStaker =
 			await contractCollection.USDT.read.balanceOf([wallet_address]);
 
-		try {
-			// perform withdrawal ops
-			const { txHash } = await CryptoStakingOps.unstakeOrClaimUSDT(
-				contractCollection,
-				await viem.getWalletClient(wallet_address),
-				{
-					signature: response.data.signature,
-					payload: {
-						timestamp: BigInt(
-							response.data.signature_payload.timestamp
-						),
-						amount: BigInt(response.data.signature_payload.amount),
-						ops: WithdrawUSDTOps[
-							response.data.signature_payload.ops.toUpperCase() as keyof typeof WithdrawUSDTOps
-						],
-					},
-				}
-			);
-
-			// validate balance after fro contract & staker
-			expect(
-				await contractCollection.USDT.read.balanceOf([
-					contractCollection.CryptoStaking.address,
-				])
-			).equal(balanceUSDTBeforeContract - BigInt(withdrawalAmount));
-
-			expect(
-				await contractCollection.USDT.read.balanceOf([wallet_address])
-			).equal(balanceUSDTBeforeStaker + BigInt(withdrawalAmount));
-
-			console.log(
-				`Staker ${wallet_address} has successfully ${
-					withdrawalOpsType == WithdrawUSDTOps.UNSTAKE
-						? "unstaked"
-						: "claimed reward"
-				} ${withdrawalAmount} USDT\n${response.data}`
-			);
-
-			// update stake if unstake
-			if (withdrawalOpsType == WithdrawUSDTOps.UNSTAKE) {
-				stakes[i] = {
-					...stakes[i],
-					current_principal: withdrawalAmount,
-				};
+		// perform withdrawal ops
+		const { txHash } = await CryptoStakingOps.unstakeOrClaimUSDT(
+			contractCollection,
+			await viem.getWalletClient(wallet_address),
+			{
+				signature: response.data.signature,
+				payload: {
+					timestamp: BigInt(
+						response.data.signature_payload.timestamp
+					),
+					amount: BigInt(response.data.signature_payload.amount),
+					ops: WithdrawUSDTOps[
+						response.data.signature_payload.ops.toUpperCase() as keyof typeof WithdrawUSDTOps
+					],
+				},
 			}
-		} catch (error) {}
+		);
+
+		// validate balance after fro contract & staker
+		expect(
+			await contractCollection.USDT.read.balanceOf([
+				contractCollection.CryptoStaking.address,
+			])
+		).equal(balanceUSDTBeforeContract - BigInt(withdrawalAmount));
+
+		expect(
+			await contractCollection.USDT.read.balanceOf([wallet_address])
+		).equal(balanceUSDTBeforeStaker + BigInt(withdrawalAmount));
+
+		console.log(
+			`Staker ${wallet_address} has successfully ${
+				withdrawalOpsType == WithdrawUSDTOps.UNSTAKE
+					? "unstaked"
+					: "claimed reward"
+			} ${withdrawalAmount} USDT\n${response.data}`
+		);
+
+		// update stake if unstake
+		if (withdrawalOpsType == WithdrawUSDTOps.UNSTAKE) {
+			stakes[i] = {
+				...stakes[i],
+				current_principal: (
+					BigInt(current_principal) - BigInt(withdrawalAmount)
+				).toString(),
+			};
+		}
 	}
 
 	console.log(

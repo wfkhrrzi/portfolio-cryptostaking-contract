@@ -4,6 +4,7 @@ export type StakeInfo = {
 	wallet_address: Address;
 	initial_principal: string;
 	current_principal: string;
+	claimable_reward: string;
 	txHash: Hex;
 	time_stake: number;
 };

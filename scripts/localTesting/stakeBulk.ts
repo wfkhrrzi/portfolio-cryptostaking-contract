@@ -58,6 +58,7 @@ async function main() {
 					})
 				).timestamp
 			),
+			claimable_reward: 0n.toString(),
 		});
 	}
 

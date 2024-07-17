@@ -1,4 +1,10 @@
 import { WithdrawUSDTOps } from "../../test/CryptoStakingOps";
 import { withdrawalOps } from "./withdrawalOps";
 
-withdrawalOps(WithdrawUSDTOps.CLAIM_REWARD).catch((err) => console.error(err));
+async function main() {
+	await withdrawalOps(WithdrawUSDTOps.CLAIM_REWARD).catch((err) =>
+		console.error(err)
+	);
+}
+
+main().catch((err) => console.error(err));
